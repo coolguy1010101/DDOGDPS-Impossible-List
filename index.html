@@ -18,23 +18,23 @@
   <div class="max-w-7xl mx-auto p-6">
     <!-- HEADER -->
     <div class="flex items-center justify-between mb-12 border-b border-cyan-500 pb-6">
-      <h1 onclick="openModPanel()" class="text-5xl font-bold tracking-widest text-cyan-400 cursor-pointer">YOUR GDPS DEMON LIST</h1>
+      <h1 class="text-5xl font-bold tracking-widest text-cyan-400">YOUR GDPS DEMON LIST</h1>
       <button onclick="showSubmitModal()" class="bg-cyan-500 hover:bg-cyan-400 px-8 py-3 rounded-xl font-bold flex items-center gap-2">
         <i class="fas fa-plus"></i> SUBMIT RECORD
       </button>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-      <!-- MAIN LIST -->
+      <!-- MAIN LIST (ONLY TESTLEVEL RIGHT NOW) -->
       <div class="lg:col-span-8">
         <div class="overflow-x-auto">
           <table class="w-full text-left">
             <thead>
               <tr class="border-b border-zinc-700 text-cyan-300">
-                <th class="p-4 cursor-pointer" onclick="sortTable(0)">#</th>
-                <th class="p-4 cursor-pointer" onclick="sortTable(1)">Level</th>
-                <th class="p-4 cursor-pointer" onclick="sortTable(2)">Creator</th>
-                <th class="p-4 cursor-pointer" onclick="sortTable(3)">Verifier</th>
+                <th class="p-4">#</th>
+                <th class="p-4">Level</th>
+                <th class="p-4">Creator</th>
+                <th class="p-4">Verifier</th>
                 <th class="p-4">Proof</th>
               </tr>
             </thead>
@@ -72,41 +72,20 @@
         <input type="text" id="player" placeholder="Your GDPS username" class="w-full bg-black border border-zinc-700 p-4 rounded-xl mb-4" required>
         <input type="text" id="level" placeholder="Level name" class="w-full bg-black border border-zinc-700 p-4 rounded-xl mb-4" required>
         <input type="url" id="video" placeholder="YouTube / Streamable link" class="w-full bg-black border border-zinc-700 p-4 rounded-xl mb-6" required>
-        <button type="submit" class="w-full bg-green-500 hover:bg-green-400 py-4 rounded-2xl font-bold">SEND TO MODS</button>
+        <button type="submit" class="w-full bg-green-500 hover:bg-green-400 py-4 rounded-2xl font-bold">SEND TO MODS (Discord)</button>
       </form>
       <button onclick="hideSubmitModal()" class="mt-4 text-zinc-500 w-full">Cancel</button>
     </div>
   </div>
 
-  <!-- MOD PANEL (password: admin123) -->
-  <div id="modPanel" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50">
-    <div class="bg-zinc-900 p-8 rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-auto">
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="text-4xl text-red-400">🔒 MOD PANEL</h2>
-        <button onclick="closeModPanel()" class="text-zinc-500 text-3xl">✕</button>
-      </div>
-      <h3 class="text-xl text-yellow-400 mb-4">📥 PENDING SUBMISSIONS</h3>
-      <div id="pendingList" class="space-y-3 mb-8"></div>
-      <h3 class="text-xl text-red-400 mb-4">🗑️ DELETE LEVEL</h3>
-      <div class="flex gap-3">
-        <input id="deleteInput" placeholder="Level name" class="flex-1 bg-black border border-zinc-700 p-4 rounded-xl">
-        <button onclick="deleteLevel()" class="bg-red-500 hover:bg-red-400 px-8 rounded-xl font-bold">DELETE</button>
-      </div>
-      <button onclick="closeModPanel()" class="mt-8 w-full bg-zinc-700 py-4 rounded-2xl">Close Panel</button>
-    </div>
-  </div>
-
   <script>
+    // ONLY ONE LEVEL — TestLevel (exactly as you asked)
     let demons = [
-      { pos: 1, level: "Sakupen Circle", creator: "Dude", verifier: "You", video: "https://youtu.be/dQw4w9wg" },
-      { pos: 2, level: "Acheron", creator: "Riot", verifier: "Spaceuk", video: "https://youtu.be/example" },
-      { pos: 3, level: "Slaughterhouse", creator: "icxt", verifier: "Zoink", video: "https://youtu.be/example" }
+      { pos: 1, level: "TestLevel", creator: "Test", verifier: "Test", video: "https://www.youtube.com" }
     ];
 
-    let pending = JSON.parse(localStorage.getItem('pendingRecords')) || [];
-
-    // ←←← CHANGE THIS TO YOUR REAL WEBHOOK URL ←←←
-    const WEBHOOK_URL = "https://discord.com/api/webhooks/1481131943855784076/_pEXbNMEPEFAn1eeyKdcJTc4_5HqXlIfdm1FnFEhTLhgNLvvX8kZtpf1eLUIYlE4EMiN";
+    // ←←← PUT YOUR DISCORD WEBHOOK HERE (the one you sent me) ←←←
+    const WEBHOOK_URL = "https://discord.com/api/webhooks/YOUR_WEBHOOK_HERE";
 
     function renderTable() {
       const tbody = document.getElementById('demonTable');
@@ -128,104 +107,40 @@
       });
     }
 
-    function renderPending() {
-      const list = document.getElementById('pendingList');
-      list.innerHTML = pending.length === 0 
-        ? '<p class="text-zinc-500">No pending records...</p>' 
-        : pending.map((p, i) => `
-          <div class="bg-zinc-800 p-5 rounded-2xl flex justify-between items-center">
-            <div><span class="font-bold">${p.player}</span> on <span class="text-cyan-400">${p.level}</span><br>
-            <a href="${p.video}" target="_blank" class="text-xs text-cyan-300">proof</a></div>
-            <div class="flex gap-3">
-              <button onclick="acceptRecord(${i})" class="bg-green-500 hover:bg-green-400 px-6 py-2 rounded-xl text-sm">✅ ACCEPT</button>
-              <button onclick="denyRecord(${i})" class="bg-red-500 hover:bg-red-400 px-6 py-2 rounded-xl text-sm">❌ DENY</button>
-            </div>
-          </div>
-        `).join('');
-    }
-
-    function acceptRecord(i) {
-      const rec = pending[i];
-      demons.push({ pos: demons.length + 1, level: rec.level, creator: "Unknown", verifier: rec.player, video: rec.video });
-      pending.splice(i, 1);
-      localStorage.setItem('pendingRecords', JSON.stringify(pending));
-      renderTable(); renderPending();
-      alert(`✅ ${rec.level} added to the list!`);
-    }
-
-    function denyRecord(i) {
-      pending.splice(i, 1);
-      localStorage.setItem('pendingRecords', JSON.stringify(pending));
-      renderPending();
-      alert("❌ Denied.");
-    }
-
-    function deleteLevel() {
-      const name = document.getElementById('deleteInput').value.trim();
-      if (!name) return alert("Type a level name");
-      const idx = demons.findIndex(d => d.level.toLowerCase() === name.toLowerCase());
-      if (idx > -1) {
-        demons.splice(idx, 1);
-        demons.forEach((d, i) => d.pos = i + 1);
-        renderTable();
-        alert(`🗑️ ${name} deleted!`);
-      } else alert("Level not found");
-    }
-
     async function handleSubmit(e) {
       e.preventDefault();
       const player = document.getElementById('player').value;
       const level = document.getElementById('level').value;
       const video = document.getElementById('video').value;
 
-      pending.push({ player, level, video });
-      localStorage.setItem('pendingRecords', JSON.stringify(pending));
-
-      // FIXED WEBHOOK WITH CLEAR ERROR
-      if (WEBHOOK_URL.includes("discord.com")) {
-        try {
-          const res = await fetch(WEBHOOK_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              embeds: [{ title: "📥 NEW RECORD SUBMISSION", color: 0x00ff88, fields: [
-                { name: "Player", value: player },
-                { name: "Level", value: level },
-                { name: "Proof", value: `[Watch Video](${video})` }
-              ]}]
-            })
-          });
-          if (res.ok) {
-            alert("✅ Sent to Discord mods!");
-          } else {
-            alert("❌ Webhook failed (check your URL in the code)");
-          }
-        } catch (err) {
-          alert("❌ Could not reach Discord — double-check webhook URL!");
-          console.error(err);
-        }
-      } else {
+      if (WEBHOOK_URL.includes("YOUR_WEBHOOK_HERE")) {
         alert("❌ Put your real Discord webhook URL in the code first!");
+        return;
+      }
+
+      try {
+        await fetch(WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            embeds: [{ title: "📥 NEW RECORD SUBMISSION", color: 0x00ff88, fields: [
+              { name: "Player", value: player },
+              { name: "Level", value: level },
+              { name: "Proof", value: `[Watch Video](${video})` }
+            ]}]
+          })
+        });
+        alert("✅ Sent to Discord! Mods will review with buttons (coming next update)");
+      } catch (err) {
+        alert("❌ Webhook error — double-check the URL you sent me");
       }
 
       hideSubmitModal();
       e.target.reset();
-      renderPending();
     }
 
     function showSubmitModal() { document.getElementById('submitModal').classList.remove('hidden'); }
     function hideSubmitModal() { document.getElementById('submitModal').classList.add('hidden'); }
-    function openModPanel() {
-      const pass = prompt("Mod password (admin123)");
-      if (pass === "admin123") { document.getElementById('modPanel').classList.remove('hidden'); renderPending(); }
-      else alert("Wrong password");
-    }
-    function closeModPanel() { document.getElementById('modPanel').classList.add('hidden'); }
-    function sortTable(col) {
-      const keys = ['pos','level','creator','verifier'];
-      demons.sort((a,b) => a[keys[col]] > b[keys[col]] ? 1 : -1);
-      renderTable();
-    }
 
     renderTable();
   </script>
