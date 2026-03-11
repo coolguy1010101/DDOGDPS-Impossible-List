@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-black text-white">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demon List - YOUR GDPS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    .demon-row:hover { background-color: #1a1a1a; transform: scale(1.02); transition: all 0.2s; }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-b from-black via-zinc-950 to-black">
+  <div class="max-w-7xl mx-auto p-6">
+    <a href="index.html" class="inline-flex items-center gap-2 text-cyan-400 mb-8 hover:text-cyan-300"><i class="fas fa-arrow-left"></i> Back to Home</a>
+    <h1 class="text-5xl font-bold tracking-widest text-cyan-400 mb-12">DEMON LIST</h1>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left">
+        <thead>
+          <tr class="border-b border-zinc-700 text-cyan-300">
+            <th class="p-4">#</th>
+            <th class="p-4">Level</th>
+            <th class="p-4">Creator</th>
+            <th class="p-4">Verifier</th>
+            <th class="p-4">Proof</th>
+          </tr>
+        </thead>
+        <tbody id="demonTable" class="text-lg"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    let demons = [{ pos: 1, level: "TestLevel", creator: "Test", verifier: "Test", video: "https://www.youtube.com" }];
+    function renderTable() {
+      const tbody = document.getElementById('demonTable');
+      tbody.innerHTML = demons.map(d => `
+        <tr class="demon-row border-b border-zinc-800">
+          <td class="p-6 font-bold text-cyan-400">${d.pos}</td>
+          <td class="p-6 font-bold">${d.level}</td>
+          <td class="p-6 text-zinc-400">${d.creator}</td>
+          <td class="p-6 text-emerald-400">${d.verifier}</td>
+          <td class="p-6"><a href="${d.video}" target="_blank" class="text-cyan-400 hover:text-cyan-300 flex items-center gap-2"><i class="fas fa-play"></i> WATCH</a></td>
+        </tr>
+      `).join('');
+    }
+    renderTable();
+  </script>
+</body>
+</html>
