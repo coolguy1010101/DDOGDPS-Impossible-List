@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-black text-white">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YOUR GDPS DEMON LIST</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body { font-family: 'Press Start 2P', system-ui; }
+    .demon-row:hover { background-color: #1a1a1a; transform: scale(1.02); transition: all 0.2s; }
+    .gd-icon { image-rendering: pixelated; }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-b from-black via-zinc-950 to-black">
+  <div class="max-w-6xl mx-auto p-6">
+    <div class="flex items-center justify-between mb-12 border-b border-cyan-500 pb-6">
+      <h1 class="text-5xl font-bold tracking-widest text-cyan-400">YOUR GDPS DEMON LIST</h1>
+      <button onclick="showSubmitModal()" class="bg-cyan-500 hover:bg-cyan-400 px-8 py-3 rounded-xl font-bold flex items-center gap-2">
+        <i class="fas fa-plus"></i> SUBMIT RECORD
+      </button>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-left">
+        <thead>
+          <tr class="border-b border-zinc-700 text-cyan-300">
+            <th class="p-4 cursor-pointer" onclick="sortTable(0)">#</th>
+            <th class="p-4 cursor-pointer" onclick="sortTable(1)">Level</th>
+            <th class="p-4 cursor-pointer" onclick="sortTable(2)">Creator</th>
+            <th class="p-4 cursor-pointer" onclick="sortTable(3)">Verifier</th>
+            <th class="p-4">Proof</th>
+          </tr>
+        </thead>
+        <tbody id="demonTable" class="text-lg"></tbody>
+      </table>
+    </div>
+
+    <div class="text-center mt-16 text-zinc-500 text-sm">
+      Made with hate for bad templates 🔥 | Your GDPS 2026
+    </div>
+  </div>
+
+  <div id="submitModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center">
+    <div class="bg-zinc-900 p-8 rounded-3xl max-w-md w-full">
+      <h2 class="text-3xl mb-6 text-cyan-400">Submit a Record</h2>
+      <form id="submitForm" onsubmit="handleSubmit(event)">
+        <input type="text" id="player" placeholder="Your username" class="w-full bg-black border border-zinc-700 p-4 rounded-xl mb-4" required>
+        <input type="text" id="level" placeholder="Level name" class="w-full bg-black border border-zinc-700 p-4 rounded-xl mb-4" required>
+        <input type="url" id="video" placeholder="YouTube proof link" class="w-full bg-black border border-zinc-700 p-4 rounded-xl mb-6" required>
+        <button type="submit" class="w-full bg-green-500 hover:bg-green-400 py-4 rounded-2xl font-bold">SEND TO MODS</button>
+      </form>
+      <button onclick="hideSubmitModal()" class="mt-4 text-zinc-500">Cancel</button>
+    </div>
+  </div>
+
+  <script>
+    let demons = [
+      { pos: 1, level: "Sakupen Circle", creator: "Dude", verifier: "You", video: "https://youtu.be/dQw4w9wg" },
+      { pos: 2, level: "Acheron", creator: "Riot", verifier: "Spaceuk", video: "https://youtu.be/example" },
+      { pos: 3, level: "Slaughterhouse", creator: "icxt", verifier: "Zoink", video: "https://youtu.be/example" }
+    ];
+
+    function renderTable() {
+      const tbody = document.getElementById('demonTable');
+      tbody.innerHTML = '';
+      demons.forEach(d => {
+        tbody.innerHTML += `
+          <tr class="demon-row border-b border-zinc-800">
+            <td class="p-6 font-bold text-cyan-400">${d.pos}</td>
+            <td class="p-6 font-bold">${d.level}</td>
+            <td class="p-6 text-zinc-400">${d.creator}</td>
+            <td class="p-6 text-emerald-400">${d.verifier}</td>
+            <td class="p-6">
+              <a href="${d.video}" target="_blank" class="text-cyan-400 hover:text-cyan-300 flex items-center gap-2">
+                <i class="fas fa-play"></i> WATCH
+              </a>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function sortTable(col) {
+      const keys = ['pos', 'level', 'creator', 'verifier'];
+      demons.sort((a, b) => (a[keys[col]] > b[keys[col]]) ? 1 : -1);
+      renderTable();
+    }
+
+    function showSubmitModal() { document.getElementById('submitModal').classList.remove('hidden'); }
+    function hideSubmitModal() { document.getElementById('submitModal').classList.add('hidden'); }
+
+    function handleSubmit(e) {
+      e.preventDefault();
+      alert(`✅ Submission received! Mods will check it soon.`);
+      hideSubmitModal();
+      e.target.reset();
+    }
+
+    renderTable();
+  </script>
+</body>
+</html>
