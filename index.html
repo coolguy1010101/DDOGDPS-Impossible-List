@@ -6,14 +6,15 @@
   <title>YOUR GDPS DEMON LIST</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Press Start 2P', system-ui; }
     .demon-row:hover { background-color: #1a1a1a; transform: scale(1.02); transition: all 0.2s; }
-    .gd-icon { image-rendering: pixelated; }
   </style>
 </head>
 <body class="min-h-screen bg-gradient-to-b from-black via-zinc-950 to-black">
-  <div class="max-w-6xl mx-auto p-6">
+  <div class="max-w-7xl mx-auto p-6">
+    <!-- HEADER -->
     <div class="flex items-center justify-between mb-12 border-b border-cyan-500 pb-6">
       <h1 class="text-5xl font-bold tracking-widest text-cyan-400">YOUR GDPS DEMON LIST</h1>
       <button onclick="showSubmitModal()" class="bg-cyan-500 hover:bg-cyan-400 px-8 py-3 rounded-xl font-bold flex items-center gap-2">
@@ -21,45 +22,77 @@
       </button>
     </div>
 
-    <div class="overflow-x-auto">
-      <table class="w-full text-left">
-        <thead>
-          <tr class="border-b border-zinc-700 text-cyan-300">
-            <th class="p-4 cursor-pointer" onclick="sortTable(0)">#</th>
-            <th class="p-4 cursor-pointer" onclick="sortTable(1)">Level</th>
-            <th class="p-4 cursor-pointer" onclick="sortTable(2)">Creator</th>
-            <th class="p-4 cursor-pointer" onclick="sortTable(3)">Verifier</th>
-            <th class="p-4">Proof</th>
-          </tr>
-        </thead>
-        <tbody id="demonTable" class="text-lg"></tbody>
-      </table>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <!-- MAIN LIST -->
+      <div class="lg:col-span-8">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left">
+            <thead>
+              <tr class="border-b border-zinc-700 text-cyan-300">
+                <th class="p-4 cursor-pointer" onclick="sortTable(0)">#</th>
+                <th class="p-4 cursor-pointer" onclick="sortTable(1)">Level</th>
+                <th class="p-4 cursor-pointer" onclick="sortTable(2)">Creator</th>
+                <th class="p-4 cursor-pointer" onclick="sortTable(3)">Verifier</th>
+                <th class="p-4">Proof</th>
+              </tr>
+            </thead>
+            <tbody id="demonTable" class="text-lg"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- RIGHT SIDEBAR - RECORD RULES -->
+      <div class="lg:col-span-4">
+        <div class="bg-zinc-900 border border-cyan-500 rounded-3xl p-8 sticky top-6">
+          <h2 class="text-3xl text-cyan-400 mb-6 flex items-center gap-3">
+            <i class="fas fa-book"></i> RECORD RULES
+          </h2>
+          <ul class="space-y-4 text-sm text-zinc-300">
+            <li class="flex gap-3"><span class="text-cyan-400">•</span> Must be a legitimate run on YOUR GDPS server</li>
+            <li class="flex gap-3"><span class="text-cyan-400">•</span> Full video proof required (no cuts, no speedhack)</li>
+            <li class="flex gap-3"><span class="text-cyan-400">•</span> 60Hz or 360Hz only (unless your server allows otherwise)</li>
+            <li class="flex gap-3"><span class="text-cyan-400">•</span> No macros, bots, or third-party tools</li>
+            <li class="flex gap-3"><span class="text-cyan-400">•</span> Must beat the level legitimately (no noclip)</li>
+            <li class="flex gap-3"><span class="text-cyan-400">•</span> One record per player per level</li>
+            <li class="flex gap-3"><span class="text-cyan-400">•</span> Mods will verify within 24-48 hours</li>
+          </ul>
+          <div class="mt-8 text-[10px] text-zinc-500 border-t border-zinc-700 pt-4">
+            Rules can be edited anytime — just ask me for the next update
+          </div>
+        </div>
+      </div>
     </div>
 
+    <!-- FOOTER -->
     <div class="text-center mt-16 text-zinc-500 text-sm">
       Made with hate for bad templates 🔥 | Your GDPS 2026
     </div>
   </div>
 
-  <div id="submitModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center">
+  <!-- SUBMISSION MODAL -->
+  <div id="submitModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
     <div class="bg-zinc-900 p-8 rounded-3xl max-w-md w-full">
       <h2 class="text-3xl mb-6 text-cyan-400">Submit a Record</h2>
       <form id="submitForm" onsubmit="handleSubmit(event)">
-        <input type="text" id="player" placeholder="Your username" class="w-full bg-black border border-zinc-700 p-4 rounded-xl mb-4" required>
+        <input type="text" id="player" placeholder="Your GDPS username" class="w-full bg-black border border-zinc-700 p-4 rounded-xl mb-4" required>
         <input type="text" id="level" placeholder="Level name" class="w-full bg-black border border-zinc-700 p-4 rounded-xl mb-4" required>
-        <input type="url" id="video" placeholder="YouTube proof link" class="w-full bg-black border border-zinc-700 p-4 rounded-xl mb-6" required>
+        <input type="url" id="video" placeholder="YouTube / Streamable link" class="w-full bg-black border border-zinc-700 p-4 rounded-xl mb-6" required>
         <button type="submit" class="w-full bg-green-500 hover:bg-green-400 py-4 rounded-2xl font-bold">SEND TO MODS</button>
       </form>
-      <button onclick="hideSubmitModal()" class="mt-4 text-zinc-500">Cancel</button>
+      <button onclick="hideSubmitModal()" class="mt-4 text-zinc-500 w-full">Cancel</button>
     </div>
   </div>
 
   <script>
+    // === YOUR DEMONS (edit here or we'll make it JSON later) ===
     let demons = [
       { pos: 1, level: "Sakupen Circle", creator: "Dude", verifier: "You", video: "https://youtu.be/dQw4w9wg" },
       { pos: 2, level: "Acheron", creator: "Riot", verifier: "Spaceuk", video: "https://youtu.be/example" },
       { pos: 3, level: "Slaughterhouse", creator: "icxt", verifier: "Zoink", video: "https://youtu.be/example" }
     ];
+
+    // === DISCORD WEBHOOK (THIS IS HOW MODS SEE SUBMISSIONS) ===
+    const WEBHOOK_URL = "https://discord.com/api/webhooks/YOUR_WEBHOOK_HERE"; // ← CHANGE THIS
 
     function renderTable() {
       const tbody = document.getElementById('demonTable');
@@ -81,20 +114,51 @@
       });
     }
 
-    function sortTable(col) {
-      const keys = ['pos', 'level', 'creator', 'verifier'];
-      demons.sort((a, b) => (a[keys[col]] > b[keys[col]]) ? 1 : -1);
-      renderTable();
+    async function handleSubmit(e) {
+      e.preventDefault();
+      const player = document.getElementById('player').value;
+      const level = document.getElementById('level').value;
+      const video = document.getElementById('video').value;
+
+      if (!WEBHOOK_URL.includes("discord.com")) {
+        alert("❌ You forgot to add your Discord webhook URL! Check the code comment.");
+        return;
+      }
+
+      const payload = {
+        embeds: [{
+          title: "📥 NEW RECORD SUBMISSION",
+          color: 0x00ff88,
+          fields: [
+            { name: "Player", value: player, inline: true },
+            { name: "Level", value: level, inline: true },
+            { name: "Proof", value: `[Watch Video](${video})` }
+          ],
+          timestamp: new Date().toISOString()
+        }]
+      };
+
+      try {
+        await fetch(WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        alert("✅ Sent to mods! They will review it soon.");
+      } catch (err) {
+        alert("❌ Failed to send (check webhook URL)");
+      }
+
+      hideSubmitModal();
+      e.target.reset();
     }
 
     function showSubmitModal() { document.getElementById('submitModal').classList.remove('hidden'); }
     function hideSubmitModal() { document.getElementById('submitModal').classList.add('hidden'); }
-
-    function handleSubmit(e) {
-      e.preventDefault();
-      alert(`✅ Submission received! Mods will check it soon.`);
-      hideSubmitModal();
-      e.target.reset();
+    function sortTable(col) {
+      const keys = ['pos', 'level', 'creator', 'verifier'];
+      demons.sort((a, b) => (a[keys[col]] > b[keys[col]]) ? 1 : -1);
+      renderTable();
     }
 
     renderTable();
