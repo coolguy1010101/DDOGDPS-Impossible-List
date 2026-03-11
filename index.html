@@ -6,10 +6,11 @@
   <title>YOUR GDPS DEMON LIST</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <!-- COOLVETICA FONT -->
-  <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/coolvetica">
   <style>
-    body { font-family: 'Coolvetica', system-ui; }
+    body { 
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+      letter-spacing: -0.02em;
+    }
     .demon-row:hover { background-color: #1a1a1a; transform: scale(1.02); transition: all 0.2s; }
   </style>
 </head>
@@ -42,7 +43,7 @@
         </div>
       </div>
 
-      <!-- RECORD RULES SIDEBAR -->
+      <!-- RECORD RULES -->
       <div class="lg:col-span-4">
         <div class="bg-zinc-900 border border-cyan-500 rounded-3xl p-8 sticky top-6">
           <h2 class="text-3xl text-cyan-400 mb-6 flex items-center gap-3"><i class="fas fa-book"></i> RECORD RULES</h2>
@@ -58,7 +59,6 @@
       </div>
     </div>
 
-    <!-- FOOTER -->
     <div class="text-center mt-16 text-zinc-500 text-sm">
       Made with hate for bad templates 🔥 | Your GDPS 2026
     </div>
@@ -85,18 +85,13 @@
         <h2 class="text-4xl text-red-400">🔒 MOD PANEL</h2>
         <button onclick="closeModPanel()" class="text-zinc-500 text-3xl">✕</button>
       </div>
-
-      <!-- PENDING RECORDS -->
       <h3 class="text-xl text-yellow-400 mb-4">📥 PENDING SUBMISSIONS</h3>
       <div id="pendingList" class="space-y-3 mb-8"></div>
-
-      <!-- EXISTING LEVELS (delete) -->
-      <h3 class="text-xl text-red-400 mb-4">🗑️ DELETE LEVEL FROM LIST</h3>
+      <h3 class="text-xl text-red-400 mb-4">🗑️ DELETE LEVEL</h3>
       <div class="flex gap-3">
         <input id="deleteInput" placeholder="Level name" class="flex-1 bg-black border border-zinc-700 p-4 rounded-xl">
         <button onclick="deleteLevel()" class="bg-red-500 hover:bg-red-400 px-8 rounded-xl font-bold">DELETE</button>
       </div>
-
       <button onclick="closeModPanel()" class="mt-8 w-full bg-zinc-700 py-4 rounded-2xl">Close Panel</button>
     </div>
   </div>
@@ -110,7 +105,8 @@
 
     let pending = JSON.parse(localStorage.getItem('pendingRecords')) || [];
 
-    const WEBHOOK_URL = "https://discord.com/api/webhooks/YOUR_WEBHOOK_HERE"; // ← your webhook
+    // ←←← CHANGE THIS TO YOUR REAL WEBHOOK URL ←←←
+    const WEBHOOK_URL = "https://discord.com/api/webhooks/1481131943855784076/_pEXbNMEPEFAn1eeyKdcJTc4_5HqXlIfdm1FnFEhTLhgNLvvX8kZtpf1eLUIYlE4EMiN";
 
     function renderTable() {
       const tbody = document.getElementById('demonTable');
@@ -134,58 +130,46 @@
 
     function renderPending() {
       const list = document.getElementById('pendingList');
-      list.innerHTML = '';
-      if (pending.length === 0) {
-        list.innerHTML = '<p class="text-zinc-500">No pending records right now...</p>';
-        return;
-      }
-      pending.forEach((p, i) => {
-        list.innerHTML += `
+      list.innerHTML = pending.length === 0 
+        ? '<p class="text-zinc-500">No pending records...</p>' 
+        : pending.map((p, i) => `
           <div class="bg-zinc-800 p-5 rounded-2xl flex justify-between items-center">
-            <div>
-              <span class="font-bold">${p.player}</span> on <span class="text-cyan-400">${p.level}</span><br>
-              <a href="${p.video}" target="_blank" class="text-xs text-cyan-300">proof link</a>
-            </div>
+            <div><span class="font-bold">${p.player}</span> on <span class="text-cyan-400">${p.level}</span><br>
+            <a href="${p.video}" target="_blank" class="text-xs text-cyan-300">proof</a></div>
             <div class="flex gap-3">
               <button onclick="acceptRecord(${i})" class="bg-green-500 hover:bg-green-400 px-6 py-2 rounded-xl text-sm">✅ ACCEPT</button>
               <button onclick="denyRecord(${i})" class="bg-red-500 hover:bg-red-400 px-6 py-2 rounded-xl text-sm">❌ DENY</button>
             </div>
           </div>
-        `;
-      });
+        `).join('');
     }
 
     function acceptRecord(i) {
       const rec = pending[i];
-      const newPos = demons.length + 1;
-      demons.push({ pos: newPos, level: rec.level, creator: "Unknown", verifier: rec.player, video: rec.video });
+      demons.push({ pos: demons.length + 1, level: rec.level, creator: "Unknown", verifier: rec.player, video: rec.video });
       pending.splice(i, 1);
       localStorage.setItem('pendingRecords', JSON.stringify(pending));
-      renderTable();
-      renderPending();
-      alert(`✅ ${rec.level} added to position #${newPos}! (Sent to GDPS server coming next update)`);
+      renderTable(); renderPending();
+      alert(`✅ ${rec.level} added to the list!`);
     }
 
     function denyRecord(i) {
       pending.splice(i, 1);
       localStorage.setItem('pendingRecords', JSON.stringify(pending));
       renderPending();
-      alert("❌ Record denied and removed.");
+      alert("❌ Denied.");
     }
 
     function deleteLevel() {
       const name = document.getElementById('deleteInput').value.trim();
-      if (!name) return;
-      const index = demons.findIndex(d => d.level.toLowerCase() === name.toLowerCase());
-      if (index !== -1) {
-        demons.splice(index, 1);
-        // re-number positions
+      if (!name) return alert("Type a level name");
+      const idx = demons.findIndex(d => d.level.toLowerCase() === name.toLowerCase());
+      if (idx > -1) {
+        demons.splice(idx, 1);
         demons.forEach((d, i) => d.pos = i + 1);
         renderTable();
-        alert(`🗑️ ${name} deleted from list!`);
-      } else {
-        alert("Level not found.");
-      }
+        alert(`🗑️ ${name} deleted!`);
+      } else alert("Level not found");
     }
 
     async function handleSubmit(e) {
@@ -197,22 +181,33 @@
       pending.push({ player, level, video });
       localStorage.setItem('pendingRecords', JSON.stringify(pending));
 
-      // still send to Discord
+      // FIXED WEBHOOK WITH CLEAR ERROR
       if (WEBHOOK_URL.includes("discord.com")) {
-        await fetch(WEBHOOK_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            embeds: [{ title: "📥 NEW SUBMISSION", color: 0x00ff88, fields: [
-              { name: "Player", value: player },
-              { name: "Level", value: level },
-              { name: "Proof", value: `[Watch](${video})` }
-            ]}]
-          })
-        });
+        try {
+          const res = await fetch(WEBHOOK_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              embeds: [{ title: "📥 NEW RECORD SUBMISSION", color: 0x00ff88, fields: [
+                { name: "Player", value: player },
+                { name: "Level", value: level },
+                { name: "Proof", value: `[Watch Video](${video})` }
+              ]}]
+            })
+          });
+          if (res.ok) {
+            alert("✅ Sent to Discord mods!");
+          } else {
+            alert("❌ Webhook failed (check your URL in the code)");
+          }
+        } catch (err) {
+          alert("❌ Could not reach Discord — double-check webhook URL!");
+          console.error(err);
+        }
+      } else {
+        alert("❌ Put your real Discord webhook URL in the code first!");
       }
 
-      alert("✅ Sent to mods! Check Mod Panel.");
       hideSubmitModal();
       e.target.reset();
       renderPending();
@@ -220,28 +215,19 @@
 
     function showSubmitModal() { document.getElementById('submitModal').classList.remove('hidden'); }
     function hideSubmitModal() { document.getElementById('submitModal').classList.add('hidden'); }
-
     function openModPanel() {
-      const pass = prompt("🔒 Mod Panel Password (default: admin123)");
-      if (pass === "admin123") {
-        document.getElementById('modPanel').classList.remove('hidden');
-        renderPending();
-      } else {
-        alert("Wrong password.");
-      }
+      const pass = prompt("Mod password (admin123)");
+      if (pass === "admin123") { document.getElementById('modPanel').classList.remove('hidden'); renderPending(); }
+      else alert("Wrong password");
     }
     function closeModPanel() { document.getElementById('modPanel').classList.add('hidden'); }
-
     function sortTable(col) {
-      const keys = ['pos', 'level', 'creator', 'verifier'];
-      demons.sort((a, b) => (a[keys[col]] > b[keys[col]]) ? 1 : -1);
+      const keys = ['pos','level','creator','verifier'];
+      demons.sort((a,b) => a[keys[col]] > b[keys[col]] ? 1 : -1);
       renderTable();
     }
 
-    // INIT
     renderTable();
-    // if you want pending to show on load for testing
-    // renderPending();
   </script>
 </body>
 </html>
