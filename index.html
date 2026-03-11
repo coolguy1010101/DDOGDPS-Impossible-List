@@ -54,7 +54,7 @@
     </div>
   </div>
 
-  <!-- SUBMIT MODAL (same as before) -->
+  <!-- SUBMIT MODAL -->
   <div id="submitModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
     <div class="bg-zinc-900 p-8 rounded-3xl max-w-md w-full">
       <h2 class="text-3xl mb-6 text-cyan-400">Submit a Record</h2>
@@ -69,7 +69,8 @@
   </div>
 
   <script>
-    const WEBHOOK_URL = "https://discord.com/api/webhooks/YOUR_WEBHOOK_HERE"; // ← put your webhook here
+    // YOUR REAL WEBHOOK (locked in)
+    const WEBHOOK_URL = "https://discord.com/api/webhooks/1481131943855784076/_pEXbNMEPEFAn1eeyKdcJTc4_5HqXlIfdm1FnFEhTLhgNLvvX8kZtpf1eLUIYlE4EMiN";
 
     async function handleSubmit(e) {
       e.preventDefault();
@@ -78,12 +79,30 @@
       const video = document.getElementById('video').value;
 
       try {
-        await fetch(WEBHOOK_URL, { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({embeds: [{title: "📥 NEW SUBMISSION", color: 0x00ff88, fields: [{name:"Player",value:player},{name:"Level",value:level},{name:"Proof",value:`[Watch](${video})`}]}]}) });
-        alert("✅ Sent to Discord mods!");
-      } catch { alert("❌ Webhook error — check the URL"); }
+        await fetch(WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            embeds: [{ 
+              title: "📥 NEW RECORD SUBMISSION", 
+              color: 0x00ff88, 
+              fields: [
+                { name: "Player", value: player },
+                { name: "Level", value: level },
+                { name: "Proof", value: `[Watch Video](${video})` }
+              ]
+            }]
+          })
+        });
+        alert("✅ Sent to Discord! Mods will review it.");
+      } catch (err) {
+        alert("❌ Webhook failed — something went wrong (check Discord channel permissions)");
+      }
+
       hideSubmitModal();
       e.target.reset();
     }
+
     function showSubmitModal() { document.getElementById('submitModal').classList.remove('hidden'); }
     function hideSubmitModal() { document.getElementById('submitModal').classList.add('hidden'); }
   </script>
