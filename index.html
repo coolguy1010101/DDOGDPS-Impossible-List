@@ -6,9 +6,10 @@
   <title>YOUR GDPS DEMON LIST</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <!-- COOLVETICA FONT -->
+  <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/coolvetica">
   <style>
-    body { font-family: 'Press Start 2P', system-ui; }
+    body { font-family: 'Coolvetica', system-ui; }
     .demon-row:hover { background-color: #1a1a1a; transform: scale(1.02); transition: all 0.2s; }
   </style>
 </head>
@@ -16,7 +17,7 @@
   <div class="max-w-7xl mx-auto p-6">
     <!-- HEADER -->
     <div class="flex items-center justify-between mb-12 border-b border-cyan-500 pb-6">
-      <h1 class="text-5xl font-bold tracking-widest text-cyan-400">YOUR GDPS DEMON LIST</h1>
+      <h1 onclick="openModPanel()" class="text-5xl font-bold tracking-widest text-cyan-400 cursor-pointer">YOUR GDPS DEMON LIST</h1>
       <button onclick="showSubmitModal()" class="bg-cyan-500 hover:bg-cyan-400 px-8 py-3 rounded-xl font-bold flex items-center gap-2">
         <i class="fas fa-plus"></i> SUBMIT RECORD
       </button>
@@ -41,24 +42,18 @@
         </div>
       </div>
 
-      <!-- RIGHT SIDEBAR - RECORD RULES -->
+      <!-- RECORD RULES SIDEBAR -->
       <div class="lg:col-span-4">
         <div class="bg-zinc-900 border border-cyan-500 rounded-3xl p-8 sticky top-6">
-          <h2 class="text-3xl text-cyan-400 mb-6 flex items-center gap-3">
-            <i class="fas fa-book"></i> RECORD RULES
-          </h2>
+          <h2 class="text-3xl text-cyan-400 mb-6 flex items-center gap-3"><i class="fas fa-book"></i> RECORD RULES</h2>
           <ul class="space-y-4 text-sm text-zinc-300">
-            <li class="flex gap-3"><span class="text-cyan-400">•</span> Must be a legitimate run on YOUR GDPS server</li>
-            <li class="flex gap-3"><span class="text-cyan-400">•</span> Full video proof required (no cuts, no speedhack)</li>
-            <li class="flex gap-3"><span class="text-cyan-400">•</span> 60Hz or 360Hz only (unless your server allows otherwise)</li>
-            <li class="flex gap-3"><span class="text-cyan-400">•</span> No macros, bots, or third-party tools</li>
-            <li class="flex gap-3"><span class="text-cyan-400">•</span> Must beat the level legitimately (no noclip)</li>
+            <li class="flex gap-3"><span class="text-cyan-400">•</span> Legit run on YOUR GDPS only</li>
+            <li class="flex gap-3"><span class="text-cyan-400">•</span> Full uncut video proof</li>
+            <li class="flex gap-3"><span class="text-cyan-400">•</span> 60Hz or 360Hz (check server rules)</li>
+            <li class="flex gap-3"><span class="text-cyan-400">•</span> No macros, bots, noclip</li>
             <li class="flex gap-3"><span class="text-cyan-400">•</span> One record per player per level</li>
-            <li class="flex gap-3"><span class="text-cyan-400">•</span> Mods will verify within 24-48 hours</li>
+            <li class="flex gap-3"><span class="text-cyan-400">•</span> Mods verify in 24-48h</li>
           </ul>
-          <div class="mt-8 text-[10px] text-zinc-500 border-t border-zinc-700 pt-4">
-            Rules can be edited anytime — just ask me for the next update
-          </div>
         </div>
       </div>
     </div>
@@ -83,14 +78,39 @@
     </div>
   </div>
 
+  <!-- MOD PANEL (password: admin123) -->
+  <div id="modPanel" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50">
+    <div class="bg-zinc-900 p-8 rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-auto">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-4xl text-red-400">🔒 MOD PANEL</h2>
+        <button onclick="closeModPanel()" class="text-zinc-500 text-3xl">✕</button>
+      </div>
+
+      <!-- PENDING RECORDS -->
+      <h3 class="text-xl text-yellow-400 mb-4">📥 PENDING SUBMISSIONS</h3>
+      <div id="pendingList" class="space-y-3 mb-8"></div>
+
+      <!-- EXISTING LEVELS (delete) -->
+      <h3 class="text-xl text-red-400 mb-4">🗑️ DELETE LEVEL FROM LIST</h3>
+      <div class="flex gap-3">
+        <input id="deleteInput" placeholder="Level name" class="flex-1 bg-black border border-zinc-700 p-4 rounded-xl">
+        <button onclick="deleteLevel()" class="bg-red-500 hover:bg-red-400 px-8 rounded-xl font-bold">DELETE</button>
+      </div>
+
+      <button onclick="closeModPanel()" class="mt-8 w-full bg-zinc-700 py-4 rounded-2xl">Close Panel</button>
+    </div>
+  </div>
+
   <script>
-    // === YOUR DEMONS (edit here or we'll make it JSON later) ===
     let demons = [
-      { pos: 1, level: "Stereo Madness", creator: "Robtop", verifier: "Robtop", video: "https://youtu.be/dQw4w9wg" },
+      { pos: 1, level: "Sakupen Circle", creator: "Dude", verifier: "You", video: "https://youtu.be/dQw4w9wg" },
+      { pos: 2, level: "Acheron", creator: "Riot", verifier: "Spaceuk", video: "https://youtu.be/example" },
+      { pos: 3, level: "Slaughterhouse", creator: "icxt", verifier: "Zoink", video: "https://youtu.be/example" }
     ];
 
-    // === DISCORD WEBHOOK (THIS IS HOW MODS SEE SUBMISSIONS) ===
-    const WEBHOOK_URL = "https://discord.com/api/webhooks/1481131943855784076/_pEXbNMEPEFAn1eeyKdcJTc4_5HqXlIfdm1FnFEhTLhgNLvvX8kZtpf1eLUIYlE4EMiN"; // ← CHANGE THIS
+    let pending = JSON.parse(localStorage.getItem('pendingRecords')) || [];
+
+    const WEBHOOK_URL = "https://discord.com/api/webhooks/YOUR_WEBHOOK_HERE"; // ← your webhook
 
     function renderTable() {
       const tbody = document.getElementById('demonTable');
@@ -112,54 +132,116 @@
       });
     }
 
+    function renderPending() {
+      const list = document.getElementById('pendingList');
+      list.innerHTML = '';
+      if (pending.length === 0) {
+        list.innerHTML = '<p class="text-zinc-500">No pending records right now...</p>';
+        return;
+      }
+      pending.forEach((p, i) => {
+        list.innerHTML += `
+          <div class="bg-zinc-800 p-5 rounded-2xl flex justify-between items-center">
+            <div>
+              <span class="font-bold">${p.player}</span> on <span class="text-cyan-400">${p.level}</span><br>
+              <a href="${p.video}" target="_blank" class="text-xs text-cyan-300">proof link</a>
+            </div>
+            <div class="flex gap-3">
+              <button onclick="acceptRecord(${i})" class="bg-green-500 hover:bg-green-400 px-6 py-2 rounded-xl text-sm">✅ ACCEPT</button>
+              <button onclick="denyRecord(${i})" class="bg-red-500 hover:bg-red-400 px-6 py-2 rounded-xl text-sm">❌ DENY</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function acceptRecord(i) {
+      const rec = pending[i];
+      const newPos = demons.length + 1;
+      demons.push({ pos: newPos, level: rec.level, creator: "Unknown", verifier: rec.player, video: rec.video });
+      pending.splice(i, 1);
+      localStorage.setItem('pendingRecords', JSON.stringify(pending));
+      renderTable();
+      renderPending();
+      alert(`✅ ${rec.level} added to position #${newPos}! (Sent to GDPS server coming next update)`);
+    }
+
+    function denyRecord(i) {
+      pending.splice(i, 1);
+      localStorage.setItem('pendingRecords', JSON.stringify(pending));
+      renderPending();
+      alert("❌ Record denied and removed.");
+    }
+
+    function deleteLevel() {
+      const name = document.getElementById('deleteInput').value.trim();
+      if (!name) return;
+      const index = demons.findIndex(d => d.level.toLowerCase() === name.toLowerCase());
+      if (index !== -1) {
+        demons.splice(index, 1);
+        // re-number positions
+        demons.forEach((d, i) => d.pos = i + 1);
+        renderTable();
+        alert(`🗑️ ${name} deleted from list!`);
+      } else {
+        alert("Level not found.");
+      }
+    }
+
     async function handleSubmit(e) {
       e.preventDefault();
       const player = document.getElementById('player').value;
       const level = document.getElementById('level').value;
       const video = document.getElementById('video').value;
 
-      if (!WEBHOOK_URL.includes("discord.com")) {
-        alert("❌ You forgot to add your Discord webhook URL! Check the code comment.");
-        return;
-      }
+      pending.push({ player, level, video });
+      localStorage.setItem('pendingRecords', JSON.stringify(pending));
 
-      const payload = {
-        embeds: [{
-          title: "📥 NEW RECORD SUBMISSION",
-          color: 0x00ff88,
-          fields: [
-            { name: "Player", value: player, inline: true },
-            { name: "Level", value: level, inline: true },
-            { name: "Proof", value: `[Watch Video](${video})` }
-          ],
-          timestamp: new Date().toISOString()
-        }]
-      };
-
-      try {
+      // still send to Discord
+      if (WEBHOOK_URL.includes("discord.com")) {
         await fetch(WEBHOOK_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
+          body: JSON.stringify({
+            embeds: [{ title: "📥 NEW SUBMISSION", color: 0x00ff88, fields: [
+              { name: "Player", value: player },
+              { name: "Level", value: level },
+              { name: "Proof", value: `[Watch](${video})` }
+            ]}]
+          })
         });
-        alert("✅ Sent to mods! They will review it soon.");
-      } catch (err) {
-        alert("❌ Failed to send (check webhook URL)");
       }
 
+      alert("✅ Sent to mods! Check Mod Panel.");
       hideSubmitModal();
       e.target.reset();
+      renderPending();
     }
 
     function showSubmitModal() { document.getElementById('submitModal').classList.remove('hidden'); }
     function hideSubmitModal() { document.getElementById('submitModal').classList.add('hidden'); }
+
+    function openModPanel() {
+      const pass = prompt("🔒 Mod Panel Password (default: admin123)");
+      if (pass === "admin123") {
+        document.getElementById('modPanel').classList.remove('hidden');
+        renderPending();
+      } else {
+        alert("Wrong password.");
+      }
+    }
+    function closeModPanel() { document.getElementById('modPanel').classList.add('hidden'); }
+
     function sortTable(col) {
       const keys = ['pos', 'level', 'creator', 'verifier'];
       demons.sort((a, b) => (a[keys[col]] > b[keys[col]]) ? 1 : -1);
       renderTable();
     }
 
+    // INIT
     renderTable();
+    // if you want pending to show on load for testing
+    // renderPending();
   </script>
 </body>
 </html>
