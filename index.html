@@ -6,24 +6,103 @@
   <title>YOUR GDPS DEMON LIST</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <style>body { font-family: system-ui, sans-serif; }</style>
+  <style>
+    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    .nav-link { transition: all 0.2s; }
+    .nav-link:hover { transform: translateY(-2px); color: #22d3ee; }
+  </style>
 </head>
 <body class="min-h-screen bg-gradient-to-b from-black via-zinc-950 to-black">
-  <!-- SAME HOME AS BEFORE – I kept it short -->
   <div class="max-w-5xl mx-auto p-6">
+    <!-- NAV -->
     <nav class="flex justify-between items-center mb-16 border-b border-cyan-500 pb-6">
       <h1 class="text-4xl font-bold text-cyan-400">YOUR GDPS</h1>
       <div class="flex gap-8 text-lg">
         <a href="demonlist.html" class="nav-link">DEMON LIST</a>
         <a href="leaderboard.html" class="nav-link">LEADERBOARD</a>
         <a href="#" onclick="showSubmitModal()" class="nav-link">SUBMIT RECORD</a>
-        <a href="mod.html" class="nav-link text-red-400">MOD PANEL (mods only)</a>
       </div>
     </nav>
-    <!-- HERO + QUICK LINKS same as last version -->
+
+    <!-- HERO -->
+    <div class="text-center py-24">
+      <h2 class="text-7xl font-bold tracking-widest text-white mb-4">WELCOME TO<br>YOUR GDPS DEMON LIST</h2>
+      <p class="text-2xl text-zinc-400 mb-12">The official extreme demon leaderboard for your private server</p>
+      <div class="flex flex-wrap justify-center gap-6">
+        <a href="demonlist.html" class="bg-cyan-500 hover:bg-cyan-400 px-12 py-5 rounded-2xl text-xl font-bold">VIEW DEMON LIST</a>
+        <a href="leaderboard.html" class="bg-white text-black hover:bg-zinc-200 px-12 py-5 rounded-2xl text-xl font-bold">PLAYER LEADERBOARD</a>
+      </div>
+    </div>
+
+    <!-- QUICK LINKS -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-20">
+      <div onclick="window.location='demonlist.html'" class="bg-zinc-900 p-8 rounded-3xl cursor-pointer hover:border-cyan-500 border border-transparent">
+        <i class="fas fa-list text-4xl text-cyan-400 mb-4"></i>
+        <h3 class="text-2xl font-bold">Demon List</h3>
+        <p class="text-zinc-400">Ranked extremes • TestLevel #1</p>
+      </div>
+      <div onclick="window.location='leaderboard.html'" class="bg-zinc-900 p-8 rounded-3xl cursor-pointer hover:border-cyan-500 border border-transparent">
+        <i class="fas fa-trophy text-4xl text-yellow-400 mb-4"></i>
+        <h3 class="text-2xl font-bold">Leaderboard</h3>
+        <p class="text-zinc-400">Top players by points</p>
+      </div>
+      <div onclick="showSubmitModal()" class="bg-zinc-900 p-8 rounded-3xl cursor-pointer hover:border-cyan-500 border border-transparent">
+        <i class="fas fa-plus text-4xl text-green-400 mb-4"></i>
+        <h3 class="text-2xl font-bold">Submit Record</h3>
+        <p class="text-zinc-400">Mods review on Discord</p>
+      </div>
+    </div>
   </div>
 
-  <!-- SUBMIT MODAL (same, with your webhook) -->
-  <!-- ... (I kept it identical to last time so you don’t lose anything) ... -->
+  <!-- SUBMISSION MODAL -->
+  <div id="submitModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+    <div class="bg-zinc-900 p-8 rounded-3xl max-w-md w-full">
+      <h2 class="text-3xl mb-6 text-cyan-400">Submit a Record</h2>
+      <form id="submitForm" onsubmit="handleSubmit(event)">
+        <input type="text" id="player" placeholder="Your GDPS username" class="w-full bg-black border border-zinc-700 p-4 rounded-xl mb-4" required>
+        <input type="text" id="level" placeholder="Level name" class="w-full bg-black border border-zinc-700 p-4 rounded-xl mb-4" required>
+        <input type="url" id="video" placeholder="YouTube / Streamable link" class="w-full bg-black border border-zinc-700 p-4 rounded-xl mb-6" required>
+        <button type="submit" class="w-full bg-green-500 hover:bg-green-400 py-4 rounded-2xl font-bold">SEND TO DISCORD MODS</button>
+      </form>
+      <button onclick="hideSubmitModal()" class="mt-4 text-zinc-500 w-full">Cancel</button>
+    </div>
+  </div>
+
+  <script>
+    const WEBHOOK_URL = "https://discord.com/api/webhooks/1481131943855784076/_pEXbNMEPEFAn1eeyKdcJTc4_5HqXlIfdm1FnFEhTLhgNLvvX8kZtpf1eLUIYlE4EMiN";
+
+    async function handleSubmit(e) {
+      e.preventDefault();
+      const player = document.getElementById('player').value;
+      const level = document.getElementById('level').value;
+      const video = document.getElementById('video').value;
+
+      try {
+        await fetch(WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            embeds: [{ 
+              title: "📥 NEW RECORD SUBMISSION", 
+              color: 0x00ff88, 
+              fields: [
+                { name: "Player", value: player },
+                { name: "Level", value: level },
+                { name: "Proof", value: `[Watch Video](${video})` }
+              ]
+            }]
+          })
+        });
+        alert("✅ Sent to Discord! Mods will review it.");
+      } catch (err) {
+        alert("❌ Webhook error");
+      }
+      hideSubmitModal();
+      e.target.reset();
+    }
+
+    function showSubmitModal() { document.getElementById('submitModal').classList.remove('hidden'); }
+    function hideSubmitModal() { document.getElementById('submitModal').classList.add('hidden'); }
+  </script>
 </body>
 </html>
