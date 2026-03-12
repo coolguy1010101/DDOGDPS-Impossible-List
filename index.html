@@ -14,7 +14,6 @@
 </head>
 <body class="min-h-screen bg-gradient-to-b from-black via-zinc-950 to-black">
   <div class="max-w-5xl mx-auto p-6">
-    <!-- NAV -->
     <nav class="flex justify-between items-center mb-16 border-b border-cyan-500 pb-6">
       <h1 class="text-4xl font-bold text-cyan-400">YOUR GDPS</h1>
       <div class="flex gap-8 text-lg">
@@ -24,7 +23,6 @@
       </div>
     </nav>
 
-    <!-- HERO -->
     <div class="text-center py-24">
       <h2 class="text-7xl font-bold tracking-widest text-white mb-4">WELCOME TO<br>YOUR GDPS DEMON LIST</h2>
       <p class="text-2xl text-zinc-400 mb-12">The official extreme demon leaderboard for your private server</p>
@@ -34,12 +32,11 @@
       </div>
     </div>
 
-    <!-- QUICK LINKS -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-20">
       <div onclick="window.location='demonlist.html'" class="bg-zinc-900 p-8 rounded-3xl cursor-pointer hover:border-cyan-500 border border-transparent">
         <i class="fas fa-list text-4xl text-cyan-400 mb-4"></i>
         <h3 class="text-2xl font-bold">Demon List</h3>
-        <p class="text-zinc-400">Ranked extremes • TestLevel #1</p>
+        <p class="text-zinc-400">Ranked extremes</p>
       </div>
       <div onclick="window.location='leaderboard.html'" class="bg-zinc-900 p-8 rounded-3xl cursor-pointer hover:border-cyan-500 border border-transparent">
         <i class="fas fa-trophy text-4xl text-yellow-400 mb-4"></i>
@@ -54,7 +51,6 @@
     </div>
   </div>
 
-  <!-- SUBMISSION MODAL -->
   <div id="submitModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
     <div class="bg-zinc-900 p-8 rounded-3xl max-w-md w-full">
       <h2 class="text-3xl mb-6 text-cyan-400">Submit a Record</h2>
@@ -81,26 +77,13 @@
         await fetch(WEBHOOK_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            embeds: [{ 
-              title: "📥 NEW RECORD SUBMISSION", 
-              color: 0x00ff88, 
-              fields: [
-                { name: "Player", value: player },
-                { name: "Level", value: level },
-                { name: "Proof", value: `[Watch Video](${video})` }
-              ]
-            }]
-          })
+          body: JSON.stringify({ embeds: [{ title: "📥 NEW RECORD SUBMISSION", color: 0x00ff88, fields: [{name:"Player",value:player},{name:"Level",value:level},{name:"Proof",value:`[Watch Video](${video})`}] }] })
         });
-        alert("✅ Sent to Discord! Mods will review it.");
-      } catch (err) {
-        alert("❌ Webhook error");
-      }
+        alert("✅ Sent to Discord mods!");
+      } catch { alert("❌ Webhook error"); }
       hideSubmitModal();
       e.target.reset();
     }
-
     function showSubmitModal() { document.getElementById('submitModal').classList.remove('hidden'); }
     function hideSubmitModal() { document.getElementById('submitModal').classList.add('hidden'); }
   </script>
